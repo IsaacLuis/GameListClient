@@ -6,7 +6,7 @@ import Login from './auth/login';
 import Signup from './auth/signup';
 import Profile from './pages/Profile';
 import Games from './pages/Games';
-
+import GameDetail from './pages/GamesDetail';
 
 import './App.css';
 
@@ -35,7 +35,9 @@ function App() {
 
         <Route path='/' element={<Home />} />
         <Route path='/games' element={<Games />} />
-
+ 
+        <Route path="/games/:id" element={<GameDetail/>} ></Route>
+        
         <Route element={<LoggedIn />} >
 
           <Route path='/profile/:id' element={<Profile />} />

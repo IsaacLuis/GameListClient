@@ -35,8 +35,9 @@ const AuthProvider = ({ children }) => {
                     console.log(err.message);
                 })
                 .finally(() => {
+                    
                     setIsLoading(false)
-                     console.log("This is the user", user)
+                    console.log("This is the user", user)
                     // console.log("LINee 38 message", message)
                 });
             } else {
