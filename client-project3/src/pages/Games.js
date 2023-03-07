@@ -7,44 +7,47 @@ import GameDetail from "./GamesDetail";
 
 const Games = () => {
 
-  const { getGames, setGames, getNewGames, getParams,page,page_size,setPage, games, gamesParams,setGamesParams } = useContext(LoadingContext)
+  const { getGames, setGames, getNewGames,setGameDetails, getParams,page,page_size,setPage, games, gamesParams,setGamesParams } = useContext(LoadingContext)
 
 
  
 
 
-  const NextPage = () => {
+  // const NextPage = () => {
     
     
-      setPage(page + 1);
-    // setPage(previousCount => previousCount + 1, getGames())
+  //     setPage(page + 1);
+  //   // setPage(previousCount => previousCount + 1, getGames())
     
+  // }
+  const setDetails = (thisGame) => {
+    setGameDetails(thisGame)
   }
 
   useEffect(() => {
-    if(!games.length) {
+    if(!games) {
       getGames()
     }
   
 }, [])
 
-useEffect(() => {
-  if(page > 1){
+// useEffect(() => {
+//   // if(page > 1){
 
-    getNewGames()
-  }
+//     getNewGames()
+//   // }
   
    
   
 
-}, [page])
+// }, [page])
   
   
   return (
     <div className="parentImg">
       <br />
-      {games.length && console.log("Games now", games)}
-      {games.length ? (
+      {games && console.log("Games now", games)}
+      {games ? 
         <>
           {games.map((game) => {
             
@@ -52,10 +55,10 @@ useEffect(() => {
               return (
                 <>
 
-            {game && 
+            {/* {game &&  */}
                 <div className="game-card-container" key={game.id}>
                   <div className="game-card">
-                    <Link to={`/games/${game.id}`}>
+                    <Link onClick={()=>setDetails(game)} to={`/games/${game.id}`}>
                       <img src={game.background_image} alt="Gameimg" />
                     </Link>
                     <h2>{game.name}</h2>
@@ -69,12 +72,17 @@ useEffect(() => {
                         <strong>Rating </strong>
                         {game.rating}
                       </li>
-                      {game.esrb_rating.name && (
+                      {game.esrb_rating ? 
                         <li>
                           <strong>ESRB Rating </strong>
                           {game.esrb_rating.name}
                         </li>
-                      )}
+                        : 
+                        <li>
+                          <strong>ESRB Rating </strong>
+                          No Rating
+                        </li>
+                      }
                       <li>
                         <strong>Playtime </strong>
                         {game.playtime} hrs
@@ -86,20 +94,20 @@ useEffect(() => {
                     </ul>
                   </div>
                 </div>
-          }
+          {/* } */}
                 </>
               );
             }
           )}
         </>
-      ) : (
+       : 
         <h4>Loading...</h4>
-      )}
+      }
 
-      { games.length > 0 && (
+      { games && (
         <footer>
           {" "}
-          <button onClick={()=>NextPage()}>Next Page</button>{" "}
+          <button onClick={()=>getNewGames()}>Next Page</button>{" "}
         </footer>
       )}
     </div>

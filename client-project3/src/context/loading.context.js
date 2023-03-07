@@ -1,9 +1,9 @@
-import { useState, createContext } from "react";
+import { useState, useEffect, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { get, post } from "../services/authService";
 import axios from "axios";
 import Games from "../pages/Games";
-
+const API_KEY = '43a14242dd124f1fb5e0bb64b4a70da0'
 const LoadingContext = createContext();
 
 const LoadingProvider = ({ children }) => {
@@ -11,10 +11,14 @@ const LoadingProvider = ({ children }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [user, setUser] = useState(null);
     const [message, setMessage] = useState('');
-    const [ games, setGames ] = useState([]);
+    const [ games, setGames ] = useState(null);
     const [ gamesParams, setGamesParams ] = useState(1);
     const [page, setPage] = useState(1); // current page number
     const [page_size, setPageSize] = useState(20); // number of games per page
+    const [next, setNext] = useState('')
+    const [gameDetails, setGameDetails] = useState(null)
+    const [gameDetailsScreen, setGameDetailsScreen] = useState(null)
+
 
     const setTimedMessage = (newMessage) => {
       setMessage(newMessage);
@@ -23,6 +27,7 @@ const LoadingProvider = ({ children }) => {
       }, 4000)
     }
 
+// ${API_KEY}
 // 43a14242dd124f1fb5e0bb64b4a70da0
 // games?key=<key from RAWG>
 
@@ -30,25 +35,26 @@ const getGames = () => {
   
   
 
-  
-	
+  if (page === 1) {
     console.log("Calling API"); 
-		 axios.get(
-			`https://rawg-video-games-database.p.rapidapi.com/games?key=43a14242dd124f1fb5e0bb64b4a70da0`,
-			{
-				headers: {
+     axios.get(
+      `https://rawg-video-games-database.p.rapidapi.com/games?key=${API_KEY}`,
+      {
+        headers: {
           'X-RapidAPI-Key': '3ab9eedeeemsh37ec609bf36b9b6p1b04b2jsnc001e82699f7',
           'X-RapidAPI-Host': 'rawg-video-games-database.p.rapidapi.com'
-				},
-				params: {page:1, page_size:page_size}
-			}
-		)
+        },
+        params: {page:1, page_size:page_size}
+      }
+    )
         .then((response)=>{
-
+  
          // let newArr = [...games];
           //newArr.push(...response.data.results)
             //   setGames(response.data.results)
-            setGames((prev) => [...prev, ...response.data.results])
+            setGames(response.data.results)
+            // setNext(response.data.next)
+            setPage(page + 1)
                setGamesParams(response.data.next) 
                console.log('page',  page);
                 console.log('res',  response.data);
@@ -60,10 +66,63 @@ const getGames = () => {
           console.log(err)
         })
 
+  }
+	
+
 
 
 
 }
+
+const noGame =  (id) => {
+  axios.get(
+    `https://rawg-video-games-database.p.rapidapi.com/games/${id}?key=${API_KEY}`,
+    {
+      headers: {
+        'X-RapidAPI-Key': '3ab9eedeeemsh37ec609bf36b9b6p1b04b2jsnc001e82699f7',
+        'X-RapidAPI-Host': 'rawg-video-games-database.p.rapidapi.com'
+      },
+      params: {page:1, page_size:page_size}
+    }
+  )
+      .then((response)=>{
+
+        console.log("this is the found game", response.data)
+
+
+          setGameDetails(response.data)
+
+
+                            
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+}
+
+
+  
+
+
+      const getGameScreen =  (id) => {
+        axios.get(`https://api.rawg.io/api/games/${id}/screenshots?key=${API_KEY}`)
+        .then(response => {
+          console.log('RESPONSE MOVIES', response.data);
+          setGameDetailsScreen(response.data)
+        })
+        .catch(error => {
+          console.log(error);
+        });
+      }
+
+
+
+
+
+
+
+
+
 
 
 const getNewGames =  () => {
@@ -74,25 +133,27 @@ const getNewGames =  () => {
 	
   console.log("Calling API"); 
    axios.get(
-    `https://rawg-video-games-database.p.rapidapi.com/games?key=43a14242dd124f1fb5e0bb64b4a70da0`,
+    `https://rawg-video-games-database.p.rapidapi.com/games?key=${API_KEY}`,
     {
       headers: {
         'X-RapidAPI-Key': '3ab9eedeeemsh37ec609bf36b9b6p1b04b2jsnc001e82699f7',
         'X-RapidAPI-Host': 'rawg-video-games-database.p.rapidapi.com'
       },
-      params: {page:page,page_size:page_size}
+      params: {page:page, page_size:page_size}
     }
   )
       .then((response)=>{
 
-       // let newArr = [...games];
-        //newArr.push(...response.data.results)
+       let newArr = [...games];
+        newArr.push(...response.data.results)
           //   setGames(response.data.results)
-          setGames((prev) => [...prev, ...response.data.results])
-             setGamesParams(response.data.next) 
-             console.log('page',  page);
-              console.log('res',  response.data);
-           console.log('this is the response', response)
+          setGames(newArr)
+          setPage(page + 1)
+          // setGames((prev) => [...prev, ...response.data.results])
+          //    setGamesParams(response.data.next) 
+          //    console.log('page',  page);
+          //     console.log('res',  response.data);
+          //  console.log('this is the response', response)
                 
               
       })
@@ -127,15 +188,15 @@ const getNewGames =  () => {
 // {condition && <ConditionalComponent />}
 //{fetchQuotes && <Games data={{fetchQuotes}} />}
     return (
-      <div>
-        <LoadingContext.Provider value={{ isLoading, page,page_size,setPage,getNewGames, gamesParams,setGamesParams, games,getGames, message, setUser, user, setIsLoading, setMessage, setTimedMessage}} >
+
+        <LoadingContext.Provider value={{ isLoading, noGame, getGameScreen,  page,page_size,setPage,getNewGames, gameDetails, setGameDetails, gameDetailsScreen, setGameDetailsScreen, gamesParams,setGamesParams, games,getGames, message, setUser, user, setIsLoading, setMessage, setTimedMessage}} >
           {children}
           
         </LoadingContext.Provider>
 
         
 
-       </div>
+
       );
 }
 
