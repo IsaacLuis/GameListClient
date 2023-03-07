@@ -1,6 +1,8 @@
 import { useContext, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { LoadingContext } from "../context/loading.context";
+import axios from "axios";
+//import baseUrl from "../services/baseUrl";
 import "./details.css";
 
 const GameDetail = () => {
@@ -13,6 +15,7 @@ const GameDetail = () => {
         gameDetailsScreen,
         noGame,
         getGameScreen,
+        user,
     } = useContext(LoadingContext);
 
     const carouselRef = useRef(null);
@@ -34,6 +37,21 @@ const GameDetail = () => {
         
     }, [gameDetailsScreen]);
 
+
+    const handleAddToWishlist = (user, game) => {
+
+        console.log("user ", user,gameDetails.id)
+        axios.post(`http://localhost:4000/games/add-wish/${user._id}`, { game: game })
+          .then((response) => {
+            console.log(response.data);
+            
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      };
+    
+
     return (
         <>
             {gameDetails ? (
@@ -41,6 +59,7 @@ const GameDetail = () => {
                     <div className="game-detail-image">
                         <img src={gameDetails.background_image} alt={gameDetails.name} />
                     </div>
+                    <button onClick={() => handleAddToWishlist(user, gameDetails)}>Next to play</button>
                     <div className="game-detail-info">
                         <h1>{gameDetails.name}</h1>
 
