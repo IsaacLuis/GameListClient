@@ -31,7 +31,7 @@ const Signup = () => {
         post('/auth/signup', newUser)
             .then((results) => {
                 console.log("Created User", results.data)
-                navigate(`/profile/${results.data._id}`)
+                navigate(`/`)
                 localStorage.setItem('authToken', results.data.token )
                 
             })

@@ -1,10 +1,9 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { LoadingContext } from "../context/loading.context";
 import axios from "axios";
-//import baseUrl from "../services/baseUrl";
 import "./details.css";
-
+import {baseUrl} from '../services/baseUrl'
 const GameDetail = () => {
     const { id } = useParams();
 
@@ -16,9 +15,13 @@ const GameDetail = () => {
         noGame,
         getGameScreen,
         user,
+        setUser,
+        
     } = useContext(LoadingContext);
 
     const carouselRef = useRef(null);
+    
+
 
     useEffect(() => {
 
@@ -35,15 +38,17 @@ const GameDetail = () => {
 
     useEffect(() => {
         
-    }, [gameDetailsScreen]);
+    }, [gameDetailsScreen,user]);
 
 
     const handleAddToWishlist = (user, game) => {
 
         console.log("user ", user,gameDetails.id)
-        axios.post(`http://localhost:4000/games/add-wish/${user._id}`, { game: game })
+        axios.post(`${baseUrl}/games/add-wish/${user._id}`, { game: game })
           .then((response) => {
-            console.log(response.data);
+            console.log('Response picked game ',response.data);
+            setUser(response.data)
+            
             
           })
           .catch((error) => {

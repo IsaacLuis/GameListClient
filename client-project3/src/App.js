@@ -9,6 +9,7 @@ import Games from './pages/Games';
 import GameDetail from './pages/GamesDetail';
 
 import './App.css';
+import Library from './pages/Library';
 
 function App() {
 
@@ -41,6 +42,7 @@ function App() {
         <Route element={<LoggedIn />} >
 
           <Route path='/profile/:id' element={<Profile />} />
+          <Route path='/mylibrary' element={<Library />} />
 
         </Route>
 

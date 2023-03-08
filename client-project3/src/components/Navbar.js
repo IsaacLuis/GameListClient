@@ -26,7 +26,7 @@ const Navbar = () => {
                 getToken() ? 
                 <>
                     {user && <Link to={`/profile/${user._id}`}>Profile</Link>}
-                    
+                   {user && <Link to={'/mylibrary'}>Library</Link>}
                     <button onClick={logout}>Logout</button>
                 </>
 

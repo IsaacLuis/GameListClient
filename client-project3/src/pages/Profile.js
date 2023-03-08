@@ -4,7 +4,7 @@ const Profile = () => {
     const { user} = useContext(LoadingContext)
     return (
         <div>
-            <h1>Welcome {user.name}</h1>
+           {user && <h1>Welcome {user.name}</h1>}
 
         </div>
     )

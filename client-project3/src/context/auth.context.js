@@ -15,7 +15,7 @@ const AuthProvider = ({ children }) => {
 
     
     const { setIsLoading, setUser, setMessage, user, message } = useContext(LoadingContext)
-
+    
     const navigate = useNavigate();
 
     const authenticateUser = () => {
